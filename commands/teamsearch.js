@@ -25,6 +25,7 @@ exports.run = async (client, msg, args) => {
                 return msg.channel.send("There's no club like that bro.");
             }
             paginateClubs(msg, clubSearch);
+            await loadingMessage.delete();
         } catch (error) {
             console.log("TeamSearch | Error: " + error.message);
             msg.channel.send("Congrats! You just found an error.");
@@ -64,7 +65,6 @@ exports.run = async (client, msg, args) => {
                 sentEmbed.reactions.removeAll();
             });
         });
-await loadingMessage.delete();
     };
     function generateEmbed(clubSearch, page, totalPages) {
         const embed = new dc.EmbedBuilder()
