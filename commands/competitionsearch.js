@@ -1,33 +1,33 @@
 const dc = require('discord.js');
 
 exports.run = async (client, msg, args) => {
-    const clubName = args.join(" ");
+    const competitionName = args.join(" ");
 
-    async function fetchClub(clubName) {
+    async function fetchClub(competitionName) {
         try {
-            const response = await fetch(`https://transfermarkt-api.fly.dev/clubs/search/${clubName}?page_number=1`);
+            const response = await fetch(`https://transfermarkt-api.fly.dev/competitions/search/${competitionName}?page_number=1`);
             const data = await response.json();
             return data.results;
         } catch (error) {
-            console.error("TeamSearch | Error:", error);
+            console.error("CompetitionSearch | Error:", error);
             throw error;
         }
     }
 
     async function fetchAndLogClub() {
         try {
-            if (clubName.length === 0) {
-                return msg.channel.send('You need to write a club to get a club duh. Example: t!ts Team Name');
+            if (competitionName.length === 0) {
+                return msg.channel.send('You need to write a competition to get a competition duh. Example: t!cs Competition Name');
             }
             let loadingMessage = await msg.channel.send('Loading data <a:loading:1287001854496215113>');
-            const clubSearch = await fetchClub(clubName);
+            const clubSearch = await fetchClub(competitionName);
             if (clubSearch.length === 0) {
-                return msg.channel.send("There's no club like that bro.");
+                return msg.channel.send("There's no competition like that bro.");
             }
             paginateClubs(msg, clubSearch);
             await loadingMessage.delete();
         } catch (error) {
-            console.log("TeamSearch | Error: " + error.message);
+            console.log("CompetitionSearch | Error: " + error.message);
             msg.channel.send("Congrats! You just found an error.");
         }
     }
@@ -69,18 +69,18 @@ exports.run = async (client, msg, args) => {
     function generateEmbed(clubSearch, page, totalPages) {
         const embed = new dc.EmbedBuilder()
             .setColor(0x0099FF)
-            .setTitle(`Search Result for ${clubName} (Page ${page + 1} of ${totalPages})`)
+            .setTitle(`Search Result for ${competitionName} (Page ${page + 1} of ${totalPages})`)
             .setTimestamp()
 			.setFooter({ text: `Requested by ${msg.author.username}`, iconURL: `${msg.author.displayAvatarURL()}` });
         clubSearch.forEach(clubData => {
             const name = clubData.name || 'Unknown';
             const id = clubData.id || 'Unknown';
-            const country = clubData.country || 'Unknown';
+            const continent = clubData.continent || 'Unknown';
 
             embed.addFields(
                 { name: 'Name:', value: name, inline: true },
 				{ name: 'ID:', value: id, inline: true },
-				{ name: 'Country:', value: country, inline: true }
+				{ name: 'Continent:', value: continent, inline: true }
             );
         });
         return embed;
@@ -98,13 +98,13 @@ exports.run = async (client, msg, args) => {
 };
 
 module.exports.conf = {
-    aliases: ['teamsearch', 'ts', 'teams'],
+    aliases: ['competitionsearch', 'cs', 'competitions'],
     permLevel: 0,
-    kategori: 'Team'
+    kategori: 'Competition'
 };
 
 module.exports.help = {
-    name: 'teamsearch',
-    description: 'Gives a listing of teams.',
-    usage: 'teamsearch teamname'
+    name: 'competitionsearch',
+    description: 'Gives a listing of competitions.',
+    usage: 'competitionsearch competitionname'
 };
