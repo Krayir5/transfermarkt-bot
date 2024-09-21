@@ -1,0 +1,21 @@
+{
+  "name": "marktbot",
+  "version": "5.0.0",
+  "description": "",
+  "main": "markt.js",
+  "scripts": {
+    "start": "node markt.js"
+  },
+  "keywords": [],
+  "author": "Krayir5",
+  "license": "GPL-3.0-only",
+  "dependencies": {
+    "discord.js": "^14.16.2",
+    "express": "^4.21.0",
+    "fs": "^0.0.1-security",
+    "http": "^0.0.1-security"
+  },
+  "engines": {
+    "node": "20.17.0"
+  }
+}
