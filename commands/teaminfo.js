@@ -48,14 +48,14 @@ async function fetchAndLogClub() {
             if (isNaN(clubID)) {
                 return msg.channel.send("You need to write a club id. If you don't know club's id you could look it up by t!ts Team Name.");
             }
-let loadingMessage = await msg.channel.send('Loading data <a:loading:1287001854496215113>');
+            let loadingMessage = await msg.channel.send('Loading data <a:loading:1287001854496215113>');
             const clubInfo = await fetchClub(clubID);
             if (clubInfo.details && clubInfo.details.includes('Client Error.')) {
                 return msg.channel.send("There's no club like that bro.");
             }
             const embed = generateEmbed(clubInfo);
             msg.channel.send({ embeds: [embed] });
-await loadingMessage.delete();
+            await loadingMessage.delete();
         } catch (error) {
             console.log("TeamInfo | Error: " + error.message);
             msg.channel.send("Congrats! You just found an error.");
@@ -72,6 +72,6 @@ module.exports.conf = {
 
 module.exports.help = {
     name: 'teaminfo',
-    description: 'Gives info of an team.',
+    description: 'Gives info of a team.',
     usage: 'teaminfo teamid'
 };

@@ -1,4 +1,5 @@
 const { Client, GatewayIntentBits, Partials } = require("discord.js");
+Client.setMaxListeners(13)
 const settings = require("./settings.json");
 
 const client = new Client({
@@ -17,7 +18,6 @@ module.exports = client;
 
 require("./events/message.js")
 require("./events/ready.js")
-
 const express = require("express");
 const app = express();
 const http = require("http");

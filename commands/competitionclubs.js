@@ -1,39 +1,42 @@
 const dc = require('discord.js');
 
 exports.run = async (client, msg, args) => {
-const clubID = Number(args[0]);
-    async function fetchPlayers(clubID) {
+const competitionID = args[0];
+const seasonID = args[1];
+    async function fetchClubs(competitionID, seasonID) {
         try {
-            const response = await fetch(`https://transfermarkt-api.fly.dev/clubs/${clubID}/players?season_id=${args[1]}`);
+            const response = await fetch(`https://transfermarkt-api.fly.dev/competitions/${competitionID}/clubs?season_id=${seasonID}`);
             const data = await response.json();
-            return data.players;
+            return data.clubs;
         } catch (error) {
-            console.error("TeamPlayers | Error:", error);
+            console.error("CompetitionClubs | Error:", error);
             throw error;
         }
     }
-    async function fetchAndLogPlayers() {
+    async function fetchAndLogClub() {
         try {
-            if (isNaN(clubID)) {
-                return msg.channel.send("You need to write a club id. If you don't know club's id you could look it up by t!ts Team Name");
+            if (!competitionID) {
+                return msg.channel.send("You need to write a competition id. If you don't know competition's id you could look it up by t!cs Competition Name");
             };
-            if (isNaN(args[1])) {
+            if (!seasonID) {
                 return msg.channel.send('You need to enter a valid season year.');
             };
             let loadingMessage = await msg.channel.send('Loading data <a:loading:1287001854496215113>');
-            const allPlayers = await fetchPlayers(clubID);
-            if (allPlayers.length === 0) {
-                return msg.channel.send("There's no club like that bro.");
+            const allClubs = await fetchClubs(competitionID);
+            if (allClubs.length === 0) {
+                await loadingMessage.delete();
+                return msg.channel.send("There's no competition like that bro.");
             };
-            paginatePlayers(msg, allPlayers, loadingMessage);
+            paginateClubs(msg, allClubs, loadingMessage);
         } catch (error) {
-            console.log("TeamPlayers | Error: " + error.message);
+            console.log("CompetitionClubs | Error: " + error.message);
         };
     };
-    async function paginatePlayers(msg, players, loadingMessage) {
-        const chunks = sliceIntoChunks(players, 2);
+    async function paginateClubs(msg, clubs, loadingMessage) {
+        const chunks = sliceIntoChunks(clubs, 8);
         let currentPage = 0;
         const exampleEmbed = generateEmbed(chunks[currentPage], currentPage, chunks.length);
+        if (chunks.length === 1) {return msg.channel.send({ embeds: [exampleEmbed] })};
         msg.channel.send({ embeds: [exampleEmbed] }).then(sentEmbed => {
             sentEmbed.react('<:arrowleft:1286761260939083817>');
             sentEmbed.react('<:arrowright:1286761277406056448>');
@@ -60,45 +63,21 @@ const clubID = Number(args[0]);
         });
         await loadingMessage.delete();
     };
-    function generateEmbed(players, page, totalPages) {
+    function generateEmbed(clubs, page, totalPages) {
         const embed = new dc.EmbedBuilder()
             .setColor(0x0099FF)
             .setTitle(`Players in season ${args[1]} (Page ${page + 1} of ${totalPages})`)
             .setTimestamp()
 			.setFooter({text: `Requested by ${msg.author.username}`,iconURL: `${msg.author.displayAvatarURL()}`});
 
-        players.forEach(player => {
-            const name = player.name || 'Unknown';
-			const id = player.id || 'Unknown';
-            const position = player.position || 'Unknown';
-            const age = player.age || 'Unknown';
-			const height = player.height || 'Unknown';
-			let signedFrom = player.signedFrom || 'Unknown';
-            if(signedFrom.includes(": Ablöse")) {
-                signedFrom = signedFrom.replace(": Ablöse", "Free Agent");
-            }
-            let contract
-            if(player.contract){
-            contract = player.contract;
-            }else if(player.currentClub === "Retired"){
-            contract = player.currentClub;
-            }else if(!player.contract){
-            contract = `Moved to ${player.currentClub}`;
-            }
-            const marketValue = player.marketValue || 'Unknown';
-            const nationality = player.nationality.join(", ") || 'Unknown';
+        clubs.forEach(cdata => {
+            const name = cdata.name || 'Unknown';
+			const id = cdata.id || 'Unknown';
 
             embed.addFields(
                 { name: 'Name:', value: name, inline: true },
 				{ name: 'ID:', value: id, inline: true },
-				{ name: 'Nationality(s):', value: nationality, inline: true },
-				{ name: 'Age:', value: age.toString(), inline: true },
-				{ name: 'Height:', value: height.toString(), inline: true },
-				{ name: 'Position:', value: position, inline: true },
-				{ name: 'Signed From:', value: signedFrom, inline: true },
-                { name: 'Contract:', value: contract, inline: true },
-                { name: 'Market Value:', value: marketValue.toString(), inline: true },
-				{ name: '\u200B', value: '\u200B' }
+				{ name: '\u200B', value: '\u200B', inline: true}
             );
 			
         });
@@ -113,17 +92,17 @@ const clubID = Number(args[0]);
         }
         return res;
     }
-fetchAndLogPlayers();
+fetchAndLogClub();
 };
 
 module.exports.conf = {
-    aliases: ['teamplayers', 'tp', 'teamp'],
+    aliases: ['competitionclubs', 'cb', 'competitionb'],
     permLevel: 0,
-    kategori: 'Team'
+    kategori: 'Competition'
 };
 
 module.exports.help = {
-    name: 'teamplayers',
-    description: 'A list of teamplayes.',
-    usage: 'teamplayers teamid season'
+    name: 'competitionclubs',
+    description: 'Gives a listing of competition clubs.',
+    usage: 'competitionclubs competitionid'
 };

@@ -1,39 +1,39 @@
 const dc = require('discord.js');
 
 exports.run = async (client, msg, args) => {
-    const clubName = args.join(" ");
+    const playerName = args.join(" ");
 
-    async function fetchClub(clubName) {
+    async function fetchPlayer(playerName) {
         try {
-            const response = await fetch(`https://transfermarkt-api.fly.dev/clubs/search/${clubName}?page_number=1`);
+            const response = await fetch(`https://transfermarkt-api.fly.dev/players/search/${playerName}?page_number=1`);
             const data = await response.json();
             return data.results;
         } catch (error) {
-            console.error("TeamSearch | Error:", error);
+            console.error("PlayerSearch | Error:", error);
             throw error;
         }
     }
 
-    async function fetchAndLogClub() {
+    async function fetchAndLogPlayer() {
         try {
-            if (clubName.length === 0) {
+            if (playerName.length === 0) {
                 return msg.channel.send('You need to write a club to get a club duh. Example: t!ts Team Name');
             }
             let loadingMessage = await msg.channel.send('Loading data <a:loading:1287001854496215113>');
-            const clubSearch = await fetchClub(clubName);
-            if (clubSearch.length === 0) {
-                return msg.channel.send("There's no club like that bro.");
+            const playerSearch = await fetchPlayer(playerName);
+            if (playerSearch.length === 0) {
+                return msg.channel.send("There's no player like that bro.");
             }
-            paginateClubs(msg, clubSearch);
+            paginatePlayers(msg, playerSearch);
             await loadingMessage.delete();
         } catch (error) {
-            console.log("TeamSearch | Error: " + error.message);
+            console.log("PlayerSearch | Error: " + error.message);
             msg.channel.send("Congrats! You just found an error.");
         }
     }
 
-   async function paginateClubs(msg, clubs) {
-        const chunks = sliceIntoChunks(clubs, 5);
+   async function paginatePlayers(msg, players) {
+        const chunks = sliceIntoChunks(players, 3);
         let currentPage = 0;
         const exampleEmbed = generateEmbed(chunks[currentPage], currentPage, chunks.length);
         if (chunks.length === 1) {
@@ -66,21 +66,28 @@ exports.run = async (client, msg, args) => {
             });
         });
     }
-    function generateEmbed(clubSearch, page, totalPages) {
+    function generateEmbed(playerSearch, page, totalPages) {
         const embed = new dc.EmbedBuilder()
             .setColor(0x0099FF)
-            .setTitle(`Search Result for ${clubName} (Page ${page + 1} of ${totalPages})`)
+            .setTitle(`Search Result for ${playerName} (Page ${page + 1} of ${totalPages})`)
             .setTimestamp()
 			.setFooter({ text: `Requested by ${msg.author.username}`, iconURL: `${msg.author.displayAvatarURL()}` });
-        clubSearch.forEach(clubData => {
-            const name = clubData.name || 'Unknown';
-            const id = clubData.id || 'Unknown';
-            const country = clubData.country || 'Unknown';
+        playerSearch.forEach(pdata => {
+            const name = pdata.name || 'Unknown';
+            const id = pdata.id || 'Unknown';
+            const club = pdata.club.name || 'Unknown';
+            const position = pdata.position || 'Unknown';
+            const nationality = pdata.nationalities.join(", ") || 'Unknown';
+            let marketValue;
+            if(pdata.marketValue === "-"){marketValue = "Retired";}else if(!pdata.marketValue){marketValue = "Unknown"}else if(pdata.marketValue){marketValue = pdata.marketValue;}
 
             embed.addFields(
                 { name: 'Name:', value: name, inline: true },
 				{ name: 'ID:', value: id, inline: true },
-				{ name: 'Country:', value: country, inline: true }
+				{ name: 'Club:', value: club, inline: true },
+                { name: 'Position:', value: position, inline: true },
+				{ name: 'Nationalities:', value: nationality, inline: true },
+				{ name: 'Market Value:', value: marketValue, inline: true }
             );
         });
         return embed;
@@ -94,17 +101,17 @@ exports.run = async (client, msg, args) => {
         return res;
     }
 
-    fetchAndLogClub();
+    fetchAndLogPlayer();
 };
 
 module.exports.conf = {
-    aliases: ['teamsearch', 'ts', 'teams'],
+    aliases: ['playersearch', 'ps', 'players'],
     permLevel: 0,
-    kategori: 'Team'
+    kategori: 'Player'
 };
 
 module.exports.help = {
-    name: 'teamsearch',
+    name: 'playersearch',
     description: 'Gives a listing of teams.',
-    usage: 'teamsearch teamname'
+    usage: 'playersearch Player Name'
 };
