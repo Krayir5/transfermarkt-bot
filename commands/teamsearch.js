@@ -31,7 +31,7 @@ exports.run = async (client, msg, args) => {
         }
     }
 
-    function paginateClubs(msg, clubs) {
+ async  function paginateClubs(msg, clubs) {
         const chunks = sliceIntoChunks(clubs, 5);
         let currentPage = 0;
         const exampleEmbed = generateEmbed(chunks[currentPage], currentPage, chunks.length);
