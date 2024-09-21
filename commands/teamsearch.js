@@ -19,6 +19,7 @@ exports.run = async (client, msg, args) => {
             if (clubName.length === 0) {
                 return msg.channel.send('You need to write a club to get a club duh. Example: t!ts Team Name');
             }
+            let loadingMessage = await msg.channel.send('Loading data <a:loading:1287001854496215113>');
             const clubSearch = await fetchClub(clubName);
             if (clubSearch.length === 0) {
                 return msg.channel.send("There's no club like that bro.");
@@ -63,7 +64,8 @@ exports.run = async (client, msg, args) => {
                 sentEmbed.reactions.removeAll();
             });
         });
-    }
+await loadingMessage.delete();
+    };
     function generateEmbed(clubSearch, page, totalPages) {
         const embed = new dc.EmbedBuilder()
             .setColor(0x0099FF)
