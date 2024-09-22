@@ -2,9 +2,11 @@ const dc = require('discord.js');
 
 exports.run = async (client, msg, args) => {
 const clubID = Number(args[0]);
+let seasonID
     async function fetchPlayers(clubID) {
         try {
-            const response = await fetch(`https://transfermarkt-api.fly.dev/clubs/${clubID}/players?season_id=${args[1]}`);
+            console.log(`TeamPlayers | Fetching Team ID: ${clubID}, Season: ${seasonID}`);
+            const response = await fetch(`https://transfermarkt-api.fly.dev/clubs/${clubID}/players?season_id=${seasonID}`);
             const data = await response.json();
             return data.players;
         } catch (error) {
@@ -17,9 +19,7 @@ const clubID = Number(args[0]);
             if (isNaN(clubID)) {
                 return msg.channel.send("You need to write a club id. If you don't know club's id you could look it up by t!ts Team Name");
             };
-            if (isNaN(args[1])) {
-                return msg.channel.send('You need to enter a valid season year.');
-            };
+            if (!args[1]) {seasonID = "2024"}else if(args[1]){seasonID = args[1]};
             let loadingMessage = await msg.channel.send('Loading data <a:loading:1287001854496215113>');
             const allPlayers = await fetchPlayers(clubID);
             if (allPlayers.length === 0) {
@@ -63,7 +63,7 @@ const clubID = Number(args[0]);
     function generateEmbed(players, page, totalPages) {
         const embed = new dc.EmbedBuilder()
             .setColor(0x0099FF)
-            .setTitle(`Players in season ${args[1]} (Page ${page + 1} of ${totalPages})`)
+            .setTitle(`Team Players in season ${seasonID} (Page ${page + 1} of ${totalPages})`)
             .setTimestamp()
 			.setFooter({text: `Requested by ${msg.author.username}`,iconURL: `${msg.author.displayAvatarURL()}`});
 

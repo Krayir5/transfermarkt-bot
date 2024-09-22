@@ -5,6 +5,7 @@ exports.run = async (client, msg, args) => {
 
     async function fetchClub(clubName) {
         try {
+            console.log(`TeamSearch | Fetching Team Name: ${clubName}`);
             const response = await fetch(`https://transfermarkt-api.fly.dev/clubs/search/${clubName}?page_number=1`);
             const data = await response.json();
             return data.results;
@@ -36,9 +37,7 @@ exports.run = async (client, msg, args) => {
         const chunks = sliceIntoChunks(clubs, 5);
         let currentPage = 0;
         const exampleEmbed = generateEmbed(chunks[currentPage], currentPage, chunks.length);
-        if (chunks.length === 1) {
-            return msg.channel.send({ embeds: [exampleEmbed] });
-        }
+        if (chunks.length === 1) {return msg.channel.send({ embeds: [exampleEmbed] });}
         msg.channel.send({ embeds: [exampleEmbed] }).then(sentEmbed => {
             sentEmbed.react('<:arrowleft:1286761260939083817>');
             sentEmbed.react('<:arrowright:1286761277406056448>');

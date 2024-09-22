@@ -4,6 +4,7 @@ exports.run = async (client, msg, args) => {
     const clubID = Number(args[0]);
     async function fetchClub(clubID) {
         try {
+            console.log(`TeamInfo | Fetching Team ID: ${clubID}`);
             const response = await fetch(`https://transfermarkt-api.fly.dev/clubs/${clubID}/profile`);
             const data = await response.json();
             return data;

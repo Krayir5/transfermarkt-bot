@@ -4,6 +4,7 @@ exports.run = async (client, msg, args) => {
 const playerID = Number(args[0]);
     async function fetchPlayer(playerID) {
         try {
+            console.log(`PlayerStats | Fetching Player ID: ${playerID}`);
             const response = await fetch(`https://transfermarkt-api.fly.dev/players/${playerID}/stats`);
             const data = await response.json();
             return data.stats;

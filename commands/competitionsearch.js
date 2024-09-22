@@ -5,6 +5,7 @@ exports.run = async (client, msg, args) => {
 
     async function fetchClub(competitionName) {
         try {
+            console.log(`CompetitionSearch | Fetching Competition Name: ${competitionName}`);
             const response = await fetch(`https://transfermarkt-api.fly.dev/competitions/search/${competitionName}?page_number=1`);
             const data = await response.json();
             return data.results;

@@ -5,6 +5,7 @@ const playerID = Number(args[0]);
 let pageID, loadingMessage
     async function fetchPlayer(playerID, pageID) {
         try {
+            console.log(`PlayerInjury | Fetching Player ID: ${playerID}`);
             const response = await fetch(`https://transfermarkt-api.fly.dev/players/${playerID}/injuries?page_number=${pageID}`);
             const data = await response.json();
             return data.injuries;
