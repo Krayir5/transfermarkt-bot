@@ -16,22 +16,22 @@ let seasonID
     }
     async function fetchAndLogClub() {
         try {
-            if (!competitionID) {
+            if(!competitionID){
                 return msg.channel.send("You need to write a competition id. If you don't know competition's id you could look it up by t!cs Competition Name");
             };
-            if (!args[1]) {seasonID = "2024"}else if(args[1]){seasonID = args[1]};
+            if(!args[1]){seasonID = "2024"}else if(args[1]){seasonID = args[1]};
             let loadingMessage = await msg.channel.send('Loading data <a:loading:1287001854496215113>');
             const allClubs = await fetchClubs(competitionID, seasonID);
-            if (allClubs.length === 0) {
+            if(allClubs.length === 0){
                 await loadingMessage.delete();
                 return msg.channel.send("There's no competition like that bro.");
             };
-            paginateClubs(msg, allClubs, loadingMessage);
+            paginateClubs(msg, allClubs, loadingMessage, seasonID);
         } catch (error) {
             console.log("CompetitionClubs | Error: " + error.message);
         };
     };
-    async function paginateClubs(msg, clubs, loadingMessage) {
+    async function paginateClubs(msg, clubs, loadingMessage, seasonID) {
         const chunks = sliceIntoChunks(clubs, 8);
         let currentPage = 0;
         const exampleEmbed = generateEmbed(chunks[currentPage], currentPage, chunks.length);
@@ -52,7 +52,7 @@ let seasonID
                         currentPage--;
                     }
                 }};
-            const newEmbed = generateEmbed(chunks[currentPage], currentPage, chunks.length);
+            const newEmbed = generateEmbed(chunks[currentPage], currentPage, chunks.length, seasonID);
             sentEmbed.edit({ embeds: [newEmbed] });
             reaction.users.remove(user.id);
             });
@@ -62,10 +62,12 @@ let seasonID
         });
         await loadingMessage.delete();
     };
-    function generateEmbed(clubs, page, totalPages) {
+    function generateEmbed(clubs, page, totalPages, seasonID) {
+        let text
+        if(seasonID === undefined){text = (`Clubs (Page ${page + 1} of ${totalPages})`)}else{text = (`Clubs in season ${seasonID} (Page ${page + 1} of ${totalPages})`)}
         const embed = new dc.EmbedBuilder()
             .setColor(0x0099FF)
-            .setTitle(`Clubs in season ${args[1]} (Page ${page + 1} of ${totalPages})`)
+            .setTitle(text)
             .setTimestamp()
 			.setFooter({text: `Requested by ${msg.author.username}`,iconURL: `${msg.author.displayAvatarURL()}`});
 
