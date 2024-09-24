@@ -26,15 +26,17 @@ let seasonID
                 await loadingMessage.delete();
                 return msg.channel.send("There's no competition like that bro.");
             };
+            console.log('going to paginate '+seasonID)
             paginateClubs(msg, allClubs, loadingMessage, seasonID);
         } catch (error) {
             console.log("CompetitionClubs | Error: " + error.message);
         };
     };
     async function paginateClubs(msg, clubs, loadingMessage, seasonID) {
+        console.log('paginate '+seasonID)
         const chunks = sliceIntoChunks(clubs, 8);
         let currentPage = 0;
-        const exampleEmbed = generateEmbed(chunks[currentPage], currentPage, chunks.length);
+        const exampleEmbed = generateEmbed(chunks[currentPage], currentPage, chunks.length, seasonID);
         if (chunks.length === 1) {return msg.channel.send({ embeds: [exampleEmbed] })};
         msg.channel.send({ embeds: [exampleEmbed] }).then(sentEmbed => {
             sentEmbed.react('<:arrowleft:1286761260939083817>');
@@ -64,10 +66,10 @@ let seasonID
     };
     function generateEmbed(clubs, page, totalPages, seasonID) {
         let text
-        if(seasonID === undefined){text = (`Clubs (Page ${page + 1} of ${totalPages})`)}else{text = (`Clubs in season ${seasonID} (Page ${page + 1} of ${totalPages})`)}
+        console.log('embed '+seasonID)
         const embed = new dc.EmbedBuilder()
             .setColor(0x0099FF)
-            .setTitle(text)
+            .setTitle(`Clubs in season ${seasonID} (Page ${page + 1} of ${totalPages})`)
             .setTimestamp()
 			.setFooter({text: `Requested by ${msg.author.username}`,iconURL: `${msg.author.displayAvatarURL()}`});
 
