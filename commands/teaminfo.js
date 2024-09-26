@@ -19,27 +19,31 @@ exports.run = async (client, msg, args) => {
             .setThumbnail(`${clubInfo.image}`)
             .setTitle(`${clubInfo.officialName}`)
             .setTimestamp()
-			.setFooter({text: `Requested by ${msg.author.username}`,iconURL: `${msg.author.displayAvatarURL()}`});
+	    .setFooter({text: `Requested by ${msg.author.username}`,iconURL: `${msg.author.displayAvatarURL()}`});
             const name = clubInfo.name || 'Unknown Name';
-			const id = clubInfo.id || 'Unknown';
+	    const id = clubInfo.id || 'Unknown';
             const foundedOn = clubInfo.foundedOn || 'Unknown';
             const stadiumName = clubInfo.stadiumName || 'Unknown';
-			const currentTransferRecord = clubInfo.currentTransferRecord || 'Unknown';
-			const currentMarketValue = clubInfo.currentMarketValue || 'Unknown';
-			const leagueID = clubInfo.league?.id || 'Unknown';
+	    const currentTransferRecord = clubInfo.currentTransferRecord || 'Unknown';
+	    const currentMarketValue = clubInfo.currentMarketValue || 'Unknown';
+	    const leagueID = clubInfo.league?.id || 'Unknown';
             const leagueName = clubInfo.league?.name || 'Unknown';
             const leagueTier = clubInfo.league?.tier || 'Unknown';
+            //const leaguePosition = clubInfo.league?.position || 'Unknown';
+            //const inLeagueSince = clubInfo.league?.inLeagueSince || 'Unknown';
 
             embed.addFields(
                 { name: 'Name:', value: name, inline: true },
-				{ name: 'ID:', value: id, inline: true },
-				{ name: 'Founded On:', value: foundedOn.toString(), inline: true },
-				{ name: 'Stadium Name:', value: stadiumName, inline: true },
-				{ name: 'Current Transfer Record:', value: currentTransferRecord.toString(), inline: true },
-				{ name: 'Current Market Value:', value: currentMarketValue.toString(), inline: true },
+		{ name: 'ID:', value: id, inline: true },
+		{ name: 'Founded On:', value: foundedOn.toString(), inline: true },
+		{ name: 'Stadium Name:', value: stadiumName, inline: true },
+		{ name: 'Current Transfer Record:', value: currentTransferRecord.toString(), inline: true },
+		{ name: 'Current Market Value:', value: currentMarketValue.toString(), inline: true },
                 { name: 'League ID:', value: leagueID, inline: true },
                 { name: 'League Name:', value: leagueName, inline: true },
                 { name: 'League Tier:', value: leagueTier, inline: true },
+                //{ name: 'League Position:', value: leaguePosition, inline: true },
+                //{ name: 'In League Since:', value: inLeagueSince, inline: true },
             );
         return embed;
         
